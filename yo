@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Consumo Energético</title>
+
+<style>
+body {
+    background: #1e1e2f;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+input, select, button {
+    margin: 5px;
+    padding: 8px;
+}
+
+#lista, #resultado {
+    background: #2e2e3e;
+    padding: 10px;
+    margin: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Consumo Energético Oficina</h2>
+
+<select id="dispositivo">
+    <option>Computador</option>
+    <option>Aire acondicionado</option>
+    <option>Impresora</option>
+    <option>Luces</option>
+</select>
+
+<br>
+
+<input type="number" id="tiempo" placeholder="Horas de uso">
+
+<br>
+
+<button onclick="agregar()">Agregar</button>
+<button onclick="mostrar()">Mostrar reporte</button>
+
+<div id="lista"></div>
+<pre id="resultado"></pre>
+
+<script>
+let dispositivos = [];
+
+const consumos = {
+    "Aire acondicionado": 1.5,
+    "Computador": 0.3,
+    "Impresora": 0.1,
+    "Luces": 0.05
+};
+
+let cantidad_luces = 10;
+
+function agregar() {
+    let nombre = document.getElementById("dispositivo").value;
+    let tiempo = document.getElementById("tiempo").value;
+
+    if (tiempo === "") {
+        alert("Ingrese las horas");
+        return;
+    }
+
+    tiempo = parseInt(tiempo);
+
+    if (tiempo < 0 || isNaN(tiempo)) {
+        alert("Tiempo inválido");
+        return;
+    }
+
+    let consumo_hora = (nombre === "Luces") 
+        ? consumos[nombre] * cantidad_luces 
+        : consumos[nombre];
+
+    dispositivos.push({
+        nombre,
+        tiempo,
+        consumo_hora
+    });
+
+    document.getElementById("lista").innerHTML += 
+        `<p>${nombre} - ${tiempo}h</p>`;
+
+    document.getElementById("tiempo").value = "";
+}
+
+function mostrar() {
+    if (dispositivos.length === 0) {
+        alert("No hay dispositivos");
+        return;
+    }
+
+    let resultado = "------ REPORTE ------\n";
+    let total = 0;
+
+    dispositivos.forEach(d => {
+        let consumo = d.tiempo * d.consumo_hora;
+        total += consumo;
+
+        resultado += `
+${d.nombre}
+Horas: ${d.tiempo}
+Consumo: ${consumo.toFixed(2)} kWh
+`;
+    });
+
+    resultado += `\nTOTAL: ${total.toFixed(2)} kWh`;
+
+    document.getElementById("resultado").textContent = resultado;
+}
+</script>
+
+</body>
+</html>
